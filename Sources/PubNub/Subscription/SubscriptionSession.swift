@@ -226,6 +226,7 @@ public class SubscriptionSession {
     let nextSubscribe = longPollingSession
       .request(with: router, requestOperator: configuration.automaticRetry)
     request = nextSubscribe
+    let nextRequestId = nextSubscribe.requestID
 
     request?
       .validate()
@@ -353,7 +354,7 @@ public class SubscriptionSession {
           if error.pubNubError?.reason == .clientCancelled || error.pubNubError?.reason == .longPollingRestart {
             if self?.subscriptionCount == 0 {
               self?.connectionStatus = .disconnected
-            } else if self?.request?.requestID == nextSubscribe.requestID {
+            } else if self?.request?.requestID == nextRequestId {
               // No new request has been created so we'll reconnect here
               self?.reconnect(at: self?.previousTokenResponse)
             }
